@@ -13,7 +13,10 @@ var CONFIG = {
   whatsapp: "556139644392",    // 55 + DDD + número, só dígitos: (61) 3964-4392
   pixelId:  "",                // <-- ID do Pixel da Meta (só os números)
   ga4Id:    "",                // <-- G-XXXXXXXXXX
-  formEndpoint: ""             // <-- URL /exec do Apps Script. Vazio = cai no WhatsApp
+  // URL /exec do Apps Script que grava na planilha "Leads — Site Ivi Interiores".
+  // Se editar o script no Google, é preciso Implantar > Gerenciar implantações >
+  // Nova versão, senão esta URL continua servindo a versão antiga.
+  formEndpoint: "https://script.google.com/macros/s/AKfycbyvaBlD6W3KmSUUSMH4pbpVvOHmJTYZMixP3dJO5NBwN6qvdoHWG9PO1jIfuRAJtsaCAg/exec"
 };
 
 /* =========================================================
