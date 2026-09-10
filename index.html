@@ -861,7 +861,9 @@ document.getElementById("enviar").addEventListener("click", async () => {
 
   /* Dá um respiro para o Pixel despachar o Lead antes de trocar de página. */
   function irParaObrigado() {
-    setTimeout(function () { window.location.href = "./obrigado.html"; }, 350);
+    /* Sem .html: o vercel.json liga cleanUrls, então /obrigado.html
+       redireciona para /obrigado. Apontar direto evita o salto. */
+    setTimeout(function () { window.location.href = "./obrigado"; }, 350);
   }
 
   if (CONFIG.formEndpoint) {

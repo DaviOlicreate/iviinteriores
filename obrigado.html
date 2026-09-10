@@ -306,6 +306,23 @@ body.travado{overflow:hidden}
 .obrigado__destaque p{margin:0;color:var(--texto-suave);font-size:.95rem}
 .obrigado__destaque strong{color:var(--texto);font-weight:500}
 .obrigado__acoes{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.8rem}
+
+/* bloco de consentimento */
+.consentir{
+  background:var(--branco);border:1px solid var(--linha);
+  border-left:3px solid var(--oliva);
+  padding:1.4rem 1.6rem;margin:2rem 0;
+}
+.consentir__titulo{font-family:var(--serif);font-size:1.15rem;margin:0 0 .5rem}
+.consentir__texto{font-size:.9rem;color:var(--texto-suave);margin:0 0 1.1rem;max-width:56ch}
+.consentir .btn{width:auto}
+.consentir__ok{
+  display:flex;align-items:center;gap:.7rem;
+  font-size:.95rem;color:var(--oliva);font-weight:500;
+}
+.consentir__ok svg{width:20px;height:20px;flex:none}
+.consentir__data{display:block;font-size:.82rem;color:var(--texto-suave);font-weight:400;margin-top:.15rem}
+.consentir--feito{border-left-color:var(--latao);background:#F5F7F3}
 .obrigado__passos{list-style:none;padding:0;margin:2.4rem 0 0;border-top:1px solid var(--linha)}
 .obrigado__passos li{
   padding:1rem 0 1rem 2.2rem;border-bottom:1px solid var(--linha);
@@ -325,13 +342,13 @@ body.travado{overflow:hidden}
 
 <header class="topo">
   <div class="env topo__int">
-    <a class="marca" href="./index.html">
+    <a class="marca" href="./">
       <span class="marca__ivi">IVI</span>
       <span class="marca__sub">interiores</span>
     </a>
     <nav class="nav" aria-label="Principal">
-      <a href="./index.html#catalogo">Peças</a>
-      <a href="./index.html#showroom">Showroom</a>
+      <a href="./#catalogo">Peças</a>
+      <a href="./#showroom">Showroom</a>
     </nav>
   </div>
 </header>
@@ -347,6 +364,19 @@ body.travado{overflow:hidden}
     <h1 id="titulo">Recebemos seus dados.</h1>
     <p class="obrigado__lead">Nossa equipe retorna no próximo horário comercial. Se quiser adiantar, é só chamar no WhatsApp — a conversa já vai com o que você preencheu.</p>
 
+    <div class="consentir" id="consentir">
+      <p class="consentir__titulo">Podemos entrar em contato?</p>
+      <p class="consentir__texto">
+        Ao concordar, você autoriza a Ivi Interiores a falar com você pelo WhatsApp
+        ou telefone que informou, sobre as peças, valores e condições. Nada de
+        disparo em massa — é um consultor da loja. Você pode pedir o cancelamento
+        a qualquer momento na própria conversa.
+      </p>
+      <button class="btn btn--zap-oliva" type="button" id="btn-consentir">
+        Concordo em receber contato
+      </button>
+    </div>
+
     <div class="obrigado__destaque">
       <p><strong>Quer resposta agora?</strong> Quem chama no WhatsApp é atendido na hora, dentro do horário do showroom. Sem fila, sem formulário de novo.</p>
     </div>
@@ -356,7 +386,7 @@ body.travado{overflow:hidden}
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4-3.6-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.5.7.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.2-.3-.3-.5-.5zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3a8.2 8.2 0 1 1 7.2 3.9z"/></svg>
         Falar agora no WhatsApp
       </a>
-      <a class="btn btn--claro" href="./index.html#catalogo">Voltar para as peças</a>
+      <a class="btn btn--claro" href="./#catalogo">Voltar para as peças</a>
     </div>
 
     <ol class="obrigado__passos">
@@ -385,12 +415,18 @@ body.travado{overflow:hidden}
    CompleteRegistration -> disparado ao ABRIR esta página.
                            Significa "mandou o formulário".
 
-   LeadQualificado      -> disparado ao CLICAR no botão do
-                           WhatsApp. Significa "mandou o
-                           formulário E foi conversar".
+   LeadQualificado      -> disparado quando a pessoa APERTA o
+                           botão de consentimento. Significa
+                           "autorizou expressamente o contato".
 
-   É o segundo que você usa para otimizar campanha. O primeiro
-   serve de denominador para medir a taxa de qualificação.
+   Contact              -> clique no botão do WhatsApp.
+
+   É o LeadQualificado que você usa para otimizar campanha. O
+   CompleteRegistration é o denominador da taxa de qualificação.
+
+   O consentimento também é gravado na planilha (coluna Status),
+   com data e hora. Evento de pixel não serve como prova de
+   consentimento — a planilha serve.
    ========================================================= */
 
 /* Recupera o que a pessoa preencheu, para a mensagem já ir pronta. */
@@ -422,14 +458,83 @@ const texto = lead.nome
 botao.href = linkZap(texto);
 
 botao.addEventListener("click", function () {
-  rastrear("lead_qualificado", {
-    ambiente: lead.ambiente || "",
-    prazo: lead.prazo || "",
-    origem: "pagina_obrigado"
-  });
-  /* Também conta como contato, para o funil não perder o passo. */
   rastrear("clique_whatsapp", { origem: "pagina_obrigado" });
 });
+
+/* =========================================================
+   Consentimento
+   ---------------------------------------------------------
+   Guardado em localStorage para o evento não disparar de novo
+   se a pessoa recarregar ou voltar para esta página.
+   ========================================================= */
+const CHAVE_CONSENTIMENTO = "ivi_consentimento";
+const caixa = document.getElementById("consentir");
+const btnConsentir = document.getElementById("btn-consentir");
+
+function lerConsentimento() {
+  try { return JSON.parse(localStorage.getItem(CHAVE_CONSENTIMENTO) || "null"); }
+  catch (e) { return null; }
+}
+
+function mostrarConfirmado(quando) {
+  const data = new Date(quando);
+  const formatado = data.toLocaleDateString("pt-BR") + " às " +
+    data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+
+  caixa.classList.add("consentir--feito");
+  caixa.innerHTML =
+    '<p class="consentir__ok">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>' +
+      '<span>Autorização registrada. Pode falar com a gente.' +
+        '<span class="consentir__data">Consentimento dado em ' + formatado + '</span>' +
+      '</span>' +
+    '</p>';
+}
+
+/* Manda o consentimento para a planilha, para ficar registrado
+   com data e hora ao lado do lead. Silencioso: se falhar, o
+   evento de pixel já foi e a pessoa não é interrompida. */
+function registrarNaPlanilha(quando) {
+  if (!CONFIG.formEndpoint || !lead.telefone) return;
+  try {
+    fetch(CONFIG.formEndpoint, {
+      method: "POST",
+      body: JSON.stringify({
+        tipo: "consentimento",
+        telefone: lead.telefone,
+        nome: lead.nome || "",
+        quando: quando
+      })
+    }).catch(function () {});
+  } catch (e) {}
+}
+
+const jaConsentiu = lerConsentimento();
+
+if (jaConsentiu && jaConsentiu.quando) {
+  mostrarConfirmado(jaConsentiu.quando);
+} else if (btnConsentir) {
+  btnConsentir.addEventListener("click", function () {
+    const quando = new Date().toISOString();
+
+    try {
+      localStorage.setItem(CHAVE_CONSENTIMENTO, JSON.stringify({
+        quando: quando,
+        telefone: lead.telefone || "",
+        nome: lead.nome || ""
+      }));
+    } catch (e) {}
+
+    rastrear("lead_qualificado", {
+      ambiente: lead.ambiente || "",
+      prazo: lead.prazo || "",
+      origem: "consentimento_obrigado"
+    });
+
+    registrarNaPlanilha(quando);
+    mostrarConfirmado(quando);
+  });
+}
 </script>
 
 </body>

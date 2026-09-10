@@ -39,6 +39,12 @@ function doPost(e) {
   try {
     var dados = JSON.parse(e.postData.contents);
 
+    // Consentimento chega depois do lead, da página de obrigado.
+    // Não cria linha nova: marca a que já existe.
+    if (dados.tipo === 'consentimento') {
+      return json_(marcarConsentimento_(dados));
+    }
+
     pegarAba_().appendRow([
       new Date(),
       dados.nome     || '',
@@ -94,6 +100,38 @@ function formatarCabecalho_(aba) {
   aba.setColumnWidth(2, 180); // Nome
   aba.setColumnWidth(3, 140); // WhatsApp
   aba.setColumnWidth(6, 320); // Mensagem
+}
+
+/**
+ * Marca o consentimento na linha do lead.
+ * Procura de baixo para cima pelo telefone, para pegar o contato
+ * mais recente caso a mesma pessoa tenha preenchido duas vezes.
+ */
+function marcarConsentimento_(dados) {
+  var aba = pegarAba_();
+  var ultima = aba.getLastRow();
+  if (ultima < 2) return { ok: false, erro: 'planilha sem leads' };
+
+  var colTelefone = COLUNAS.indexOf('WhatsApp') + 1;
+  var colStatus   = COLUNAS.indexOf('Status') + 1;
+
+  var alvo = String(dados.telefone || '').replace(/\D/g, '');
+  if (!alvo) return { ok: false, erro: 'telefone ausente' };
+
+  var telefones = aba.getRange(2, colTelefone, ultima - 1, 1).getValues();
+
+  for (var i = telefones.length - 1; i >= 0; i--) {
+    if (String(telefones[i][0]).replace(/\D/g, '') === alvo) {
+      var quando = dados.quando ? new Date(dados.quando) : new Date();
+      var carimbo = Utilities.formatDate(
+        quando, Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm'
+      );
+      aba.getRange(i + 2, colStatus).setValue('Qualificado — consentiu em ' + carimbo);
+      return { ok: true, linha: i + 2 };
+    }
+  }
+
+  return { ok: false, erro: 'lead não encontrado' };
 }
 
 /** Guarda a falha numa aba separada, para nenhum lead sumir sem deixar rastro. */
