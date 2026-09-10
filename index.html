@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ivi Interiores — Móveis e decoração de alto padrão em Brasília</title>
+<meta name="description" content="Sofás, mesas de jantar, cadeiras e aparadores de alto padrão. Showroom no Shopping ID, Brasília. Preço na tela, atendimento pelo WhatsApp.">
+
+<link rel="icon" href="./img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="./img/apple-touch-icon.png">
+<meta name="theme-color" content="#241E1A">
+
+<!--
+  ============================================================
+  IVI INTERIORES — site institucional + catálogo
+  ============================================================
+  TUDO O QUE PRECISA SER EDITADO ESTÁ EM DOIS LUGARES:
+
+  1) const CONFIG  -> número de WhatsApp, Pixel, GA4, endpoint do formulário
+  2) const PRODUTOS -> nome, ambiente, descrição, preço e foto de cada peça
+
+  Produtos e preços foram tirados dos criativos ativos da conta
+  (Cadeira Bella e a promo de 1,80/2,20). Onde o anúncio não trazia
+  preço, o campo está como null e o card mostra "consultar preço".
+
+  Fotos: os arquivos ficam em ./img/. Cada peca tem "img" (foto
+  principal) e "galeria" (fotos extras, que viram miniaturas no card).
+  Enquanto os dois estiverem vazios, o card exibe uma moldura neutra.
+  Use fit:"contain" nas artes de anuncio, para nao cortar o texto.
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --espresso:#241E1A;
+  --espresso-70:rgba(36,30,26,.7);
+  --osso:#F1EFEA;
+  --osso-fundo:#E7E3DA;
+  --nogueira:#8C6A4A;
+  --latao:#A87C3E;
+  --oliva:#6E7A63;
+  --texto:#3B342E;
+  --texto-suave:#6B625A;
+  --linha:#D6D0C4;
+  --branco:#FFFFFF;
+
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  --max:1180px;
+  --gap:clamp(1rem,3vw,2rem);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--osso);
+  color:var(--texto);
+  font-family:var(--sans);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+.env{width:min(100% - 2.5rem,var(--max));margin-inline:auto}
+
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.015em;margin:0}
+h1{font-size:clamp(2.6rem,6.2vw,4.6rem);line-height:1.02}
+h2{font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.1}
+h3{font-size:1.22rem;line-height:1.25}
+p{margin:0 0 1rem}
+.chapeu{font-family:var(--sans);font-size:.82rem;letter-spacing:.06em;color:var(--texto-suave);margin:0 0 .6rem}
+
+:focus-visible{outline:2.5px solid var(--latao);outline-offset:3px;border-radius:2px}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.55rem;
+  font-family:var(--sans);font-size:.95rem;font-weight:500;
+  padding:.78rem 1.3rem;border:none;border-radius:2px;
+  text-decoration:none;cursor:pointer;
+  transition:background-color .18s ease,color .18s ease;
+}
+.btn--zap{background:var(--espresso);color:var(--osso)}
+.btn--zap:hover{background:var(--nogueira)}
+.btn--claro{background:transparent;color:var(--espresso);border:1px solid var(--espresso)}
+.btn--claro:hover{background:var(--espresso);color:var(--osso)}
+.btn--zap-oliva{background:var(--oliva);color:#fff}
+.btn--zap-oliva:hover{background:#5D6754}
+.btn svg{width:18px;height:18px;flex:none}
+
+/* ---------- topo ---------- */
+.topo{
+  position:sticky;top:0;z-index:60;
+  background:rgba(241,239,234,.94);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--linha);
+}
+.topo__int{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 0}
+.marca{display:flex;align-items:baseline;gap:.6rem;text-decoration:none}
+.marca__ivi{font-family:var(--serif);font-size:1.6rem;letter-spacing:.22em;color:var(--espresso)}
+.marca__sub{font-size:.72rem;letter-spacing:.14em;color:var(--texto-suave)}
+.nav{display:flex;align-items:center;gap:1.6rem}
+/* :not(.btn) para o botao de WhatsApp nao herdar a cor de link do menu */
+.nav a:not(.btn){font-size:.93rem;text-decoration:none;color:var(--texto);padding:.2rem 0;border-bottom:1px solid transparent}
+.nav a:not(.btn):hover{border-bottom-color:var(--latao)}
+.nav .btn{padding:.6rem 1rem}
+@media (max-width:860px){ .nav a:not(.btn){display:none} }
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(2.6rem,6vw,5rem) 0 clamp(2rem,4vw,3.4rem)}
+.hero__grade{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1.6rem,4vw,3.4rem);align-items:center}
+.hero__texto p.lead{font-size:1.08rem;color:var(--texto-suave);max-width:44ch}
+.hero h1 span.quebra{display:block}
+.hero__acoes{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem}
+
+.vitrine{position:relative}
+.vitrine__moldura{aspect-ratio:4/5;background:var(--osso-fundo);border:1px solid var(--linha);overflow:hidden}
+.vitrine__moldura img{width:100%;height:100%;object-fit:cover;object-position:50% 58%}
+.etiqueta{
+  position:absolute;left:-14px;bottom:26px;
+  background:var(--branco);border:1px solid var(--linha);
+  padding:1rem 1.25rem;max-width:250px;
+  box-shadow:0 12px 30px rgba(36,30,26,.09);
+}
+.etiqueta__nome{font-family:var(--serif);font-size:1.1rem;margin-bottom:.15rem}
+.etiqueta__spec{font-size:.82rem;color:var(--texto-suave);margin-bottom:.6rem}
+.etiqueta__valor{font-family:var(--serif);font-size:2.1rem;color:var(--espresso);line-height:1}
+/* variante para frase no lugar de numero: mesma serifa, sem o peso de um preco */
+.etiqueta__valor--texto{font-size:1.3rem;line-height:1.2;margin-bottom:.45rem}
+.etiqueta__cond{font-size:.78rem;color:var(--texto-suave)}
+@media (max-width:820px){
+  .hero__grade{grid-template-columns:1fr}
+  .vitrine{order:-1;max-width:420px}
+  .etiqueta{left:auto;right:-8px}
+}
+
+/* ---------- barra de confiança ---------- */
+.confianca{border-block:1px solid var(--linha);background:var(--osso-fundo)}
+.confianca__grade{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--linha)}
+.confianca__item{background:var(--osso-fundo);padding:1.3rem 1.1rem}
+.confianca__forte{font-family:var(--serif);font-size:1.5rem;display:block;color:var(--espresso);line-height:1.1}
+.confianca__item p{font-size:.86rem;color:var(--texto-suave);margin:.25rem 0 0}
+@media (max-width:760px){ .confianca__grade{grid-template-columns:1fr 1fr} }
+
+/* ---------- catálogo ---------- */
+.catalogo{padding:clamp(3rem,6vw,5rem) 0}
+.catalogo__cab{display:flex;justify-content:space-between;align-items:flex-end;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.8rem}
+.catalogo__cab p{max-width:46ch;color:var(--texto-suave);margin:.6rem 0 0}
+
+.filtros{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2rem}
+.filtro{
+  font-family:var(--sans);font-size:.9rem;
+  background:transparent;border:1px solid var(--linha);border-radius:999px;
+  padding:.45rem 1rem;cursor:pointer;color:var(--texto-suave);
+  transition:all .16s ease;
+}
+.filtro:hover{border-color:var(--espresso);color:var(--espresso)}
+.filtro[aria-pressed="true"]{background:var(--espresso);border-color:var(--espresso);color:var(--osso)}
+
+.grade{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.1rem,2.4vw,1.9rem)}
+@media (max-width:940px){ .grade{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:560px){ .grade{grid-template-columns:1fr} }
+
+.peca{display:flex;flex-direction:column;background:var(--branco);border:1px solid var(--linha)}
+.peca__foto{aspect-ratio:4/5;background:var(--osso-fundo);overflow:hidden;position:relative}
+.peca__foto img{width:100%;height:100%;object-fit:cover;object-position:var(--pos,50% 50%);transition:transform .5s ease}
+.peca:hover .peca__foto img{transform:scale(1.03)}
+/* artes de anuncio: mostra a peca inteira, sem cortar preco nem titulo */
+.peca__foto--contain{background:#EAE5DC}
+.peca__foto--contain img{object-fit:contain}
+.peca:hover .peca__foto--contain img{transform:none}
+/* foto clicavel */
+.peca__foto--zoom{cursor:zoom-in}
+.peca__lupa{
+  position:absolute;right:.6rem;bottom:.6rem;
+  background:rgba(36,30,26,.62);color:#F4F2ED;
+  font-size:.72rem;letter-spacing:.04em;
+  padding:.28rem .55rem;border-radius:999px;
+  opacity:0;transition:opacity .2s ease;pointer-events:none;
+}
+.peca__foto--zoom:hover .peca__lupa,.peca__foto--zoom:focus-within .peca__lupa{opacity:1}
+/* miniaturas */
+.peca__galeria{display:flex;gap:.4rem;padding:.7rem .75rem 0}
+.peca__thumb{
+  width:46px;height:46px;flex:none;padding:0;overflow:hidden;cursor:pointer;
+  background:var(--osso-fundo);border:1px solid var(--linha);
+  transition:border-color .16s ease,opacity .16s ease;opacity:.72;
+}
+.peca__thumb img{width:100%;height:100%;object-fit:cover}
+.peca__thumb:hover{opacity:1}
+.peca__thumb[aria-current="true"]{border-color:var(--espresso);opacity:1}
+.peca__prefixo{font-size:.8rem;color:var(--texto-suave);display:block}
+.peca__vazia{
+  position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:.3rem;
+  background:repeating-linear-gradient(135deg,var(--osso-fundo),var(--osso-fundo) 11px,#DFDACF 11px,#DFDACF 22px);
+  color:var(--texto-suave);font-size:.8rem;padding:1rem;
+}
+.peca__corpo{padding:1.15rem 1.25rem 1.35rem;display:flex;flex-direction:column;flex:1}
+.peca__resumo{font-size:.9rem;color:var(--texto-suave);margin:.4rem 0 .9rem}
+.peca__specs{list-style:none;padding:0;margin:0 0 1rem;font-size:.84rem;color:var(--texto-suave)}
+.peca__specs li{padding-left:.9rem;position:relative;margin-bottom:.2rem}
+.peca__specs li::before{content:"";position:absolute;left:0;top:.62em;width:5px;height:1px;background:var(--nogueira)}
+.peca__preco{margin-top:auto;padding-top:.4rem;border-top:1px solid var(--linha)}
+.peca__de{font-size:.82rem;color:var(--texto-suave);text-decoration:line-through}
+.peca__valor{font-family:var(--serif);font-size:1.75rem;color:var(--espresso);line-height:1.1;display:block;margin-top:.15rem}
+.peca__cond{font-size:.8rem;color:var(--texto-suave);display:block;margin-bottom:.9rem}
+.peca__consultar{font-family:var(--serif);font-size:1.3rem;color:var(--texto-suave);display:block;margin:.15rem 0 .9rem}
+.peca .btn{width:100%;justify-content:center}
+
+/* ---------- faixa festival ---------- */
+.faixa{background:var(--oliva);color:#F4F3EF;padding:clamp(2.2rem,4.5vw,3.2rem) 0;margin:clamp(2.5rem,5vw,4rem) 0}
+.faixa__int{display:grid;grid-template-columns:minmax(0,300px) 1fr;align-items:center;gap:clamp(1.5rem,4vw,3rem)}
+.faixa__foto{aspect-ratio:4/3;overflow:hidden;border:1px solid rgba(247,246,242,.28)}
+.faixa__foto img{width:100%;height:100%;object-fit:cover}
+.faixa .btn{margin-top:1.4rem}
+@media (max-width:760px){
+  .faixa__int{grid-template-columns:1fr}
+  .faixa__foto{aspect-ratio:16/9}
+}
+.faixa h2{color:#F7F6F2;max-width:16ch}
+.faixa p{max-width:40ch;margin:.7rem 0 0;color:rgba(247,246,242,.82)}
+.faixa .btn{background:#F7F6F2;color:var(--espresso)}
+.faixa .btn:hover{background:var(--osso-fundo)}
+
+/* ---------- showroom ---------- */
+.showroom{background:var(--espresso);color:var(--osso);padding:clamp(3rem,6vw,5rem) 0}
+.showroom__grade{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.8rem,4vw,3.5rem)}
+.showroom h2{color:var(--osso)}
+.showroom p{color:rgba(241,239,234,.76)}
+.showroom .chapeu{color:rgba(241,239,234,.55)}
+.dados{list-style:none;padding:0;margin:1.6rem 0 0}
+.dados li{padding:.95rem 0;border-bottom:1px solid rgba(241,239,234,.16);display:flex;gap:1rem;font-size:.95rem}
+.dados span{color:rgba(241,239,234,.55);min-width:96px;flex:none}
+.dados a{color:var(--osso);text-decoration:none;border-bottom:1px solid rgba(241,239,234,.35)}
+.showroom__acoes{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.7rem}
+.showroom .btn--claro{color:var(--osso);border-color:rgba(241,239,234,.4)}
+.showroom .btn--claro:hover{background:var(--osso);color:var(--espresso)}
+@media (max-width:820px){ .showroom__grade{grid-template-columns:1fr} }
+
+/* ---------- formulário ---------- */
+.form-bloco{background:var(--branco);border:1px solid rgba(241,239,234,.18);padding:clamp(1.5rem,3vw,2.1rem);color:var(--texto)}
+.form-bloco h3{margin-bottom:.35rem}
+.form-bloco > p{font-size:.9rem;color:var(--texto-suave)}
+.campo{margin-bottom:.95rem}
+.campo label{display:block;font-size:.85rem;margin-bottom:.3rem;color:var(--texto-suave)}
+.campo input,.campo select,.campo textarea{
+  width:100%;font-family:var(--sans);font-size:.97rem;color:var(--texto);
+  padding:.7rem .8rem;border:1px solid var(--linha);border-radius:2px;background:var(--branco);
+}
+.campo textarea{min-height:84px;resize:vertical}
+.form-bloco .btn{width:100%;justify-content:center;margin-top:.4rem}
+.form-aviso{font-size:.85rem;margin-top:.9rem;padding:.7rem .8rem;border-left:2px solid var(--oliva);background:#F3F5F1;display:none}
+.form-aviso[data-visivel="true"]{display:block}
+
+/* ---------- rodapé ---------- */
+.rodape{padding:2.4rem 0;font-size:.86rem;color:var(--texto-suave)}
+.rodape__int{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;align-items:center}
+.rodape a{text-decoration:none;border-bottom:1px solid var(--linha)}
+
+/* ---------- botão flutuante ---------- */
+.flutuante{
+  position:fixed;right:18px;bottom:18px;z-index:70;
+  width:56px;height:56px;border-radius:50%;
+  background:var(--oliva);color:#fff;
+  display:grid;place-content:center;
+  box-shadow:0 8px 22px rgba(36,30,26,.22);
+}
+.flutuante svg{width:27px;height:27px}
+
+/* ---------- foto ampliada ---------- */
+.lightbox{
+  position:fixed;inset:0;z-index:90;
+  background:rgba(28,23,20,.93);
+  display:grid;grid-template-rows:1fr auto;
+  place-items:center;padding:clamp(1rem,4vw,2.5rem);
+}
+.lightbox[hidden]{display:none}
+.lightbox__palco{display:grid;place-items:center;width:100%;height:100%;min-height:0}
+.lightbox img{max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.lightbox__legenda{color:rgba(241,239,234,.82);font-size:.9rem;text-align:center;margin:1rem 0 0}
+.lightbox__btn{
+  position:absolute;background:rgba(241,239,234,.12);color:#F1EFEA;
+  border:1px solid rgba(241,239,234,.28);border-radius:50%;
+  width:44px;height:44px;font-size:1.4rem;line-height:1;cursor:pointer;
+  display:grid;place-content:center;transition:background .16s ease;
+}
+.lightbox__btn:hover{background:rgba(241,239,234,.26)}
+.lightbox__fechar{top:16px;right:16px;font-size:1.6rem}
+.lightbox__ant{left:16px;top:50%;transform:translateY(-50%)}
+.lightbox__prox{right:16px;top:50%;transform:translateY(-50%)}
+.lightbox__btn[hidden]{display:none}
+body.travado{overflow:hidden}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="env topo__int">
+    <a class="marca" href="#topo">
+      <span class="marca__ivi">IVI</span>
+      <span class="marca__sub">interiores</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#catalogo">Peças</a>
+      <a href="#showroom">Showroom</a>
+      <a href="#contato">Contato</a>
+      <a class="btn btn--zap" data-zap data-origem="menu" href="#">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4-3.6-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.5.7.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.2-.3-.3-.5-.5zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3a8.2 8.2 0 1 1 7.2 3.9z"/></svg>
+        Falar no WhatsApp
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="topo">
+
+  <section class="hero">
+    <div class="env hero__grade">
+      <div class="hero__texto">
+        <p class="chapeu">Brasília · Shopping ID · desde 1999</p>
+        <h1>O preço está <span class="quebra">aqui, não no direct.</span></h1>
+        <p class="lead">Móveis e decoração de alto padrão, com a peça e o valor na mesma tela. Você chega na conversa já sabendo o que quer.</p>
+        <div class="hero__acoes">
+          <a class="btn btn--zap" href="#catalogo">Ver as peças</a>
+          <a class="btn btn--claro" href="#showroom">Visitar o showroom</a>
+        </div>
+      </div>
+
+      <div class="vitrine">
+        <div class="vitrine__moldura">
+          <img src="./img/hero-sala.jpg"
+               alt="Sala de estar montada pela Ivi Interiores, com sofá modular em L e mesa de centro oval"
+               width="878" height="1508" fetchpriority="high" decoding="async">
+        </div>
+        <div class="etiqueta">
+          <p class="etiqueta__nome">Ambiente montado</p>
+          <p class="etiqueta__spec">Sofá modular, mesa de centro e mesa de jantar</p>
+          <p class="etiqueta__valor etiqueta__valor--texto">Projeto completo, peça por peça</p>
+          <p class="etiqueta__cond">Showroom Shopping ID · Brasília</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="confianca">
+    <div class="env">
+      <div class="confianca__grade">
+        <div class="confianca__item">
+          <span class="confianca__forte">26 anos</span>
+          <p>Transformando casas em Brasília</p>
+        </div>
+        <div class="confianca__item">
+          <span class="confianca__forte">Shopping ID</span>
+          <p>Showroom físico para ver e sentar</p>
+        </div>
+        <div class="confianca__item">
+          <span class="confianca__forte">Preço na tela</span>
+          <p>À vista e parcelado, sem consulta</p>
+        </div>
+        <div class="confianca__item">
+          <span class="confianca__forte">Ivi Casas</span>
+          <p>Projetos completos de interiores</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="catalogo" id="catalogo">
+    <div class="env">
+      <div class="catalogo__cab">
+        <div>
+          <h2>Peças em exposição</h2>
+          <p>Cada peça abre uma conversa já com o nome dela. Quem atende sabe do que você está falando desde a primeira mensagem.</p>
+        </div>
+      </div>
+
+      <div class="filtros" role="group" aria-label="Filtrar por ambiente">
+        <button class="filtro" data-filtro="todos" aria-pressed="true">Todas</button>
+        <button class="filtro" data-filtro="estar" aria-pressed="false">Sala de estar</button>
+        <button class="filtro" data-filtro="jantar" aria-pressed="false">Sala de jantar</button>
+        <button class="filtro" data-filtro="complementos" aria-pressed="false">Complementos</button>
+        <button class="filtro" data-filtro="decoracao" aria-pressed="false">Decoração</button>
+      </div>
+
+      <div class="grade" id="grade"></div>
+    </div>
+  </section>
+
+  <section class="faixa">
+    <div class="env faixa__int">
+      <div class="faixa__foto">
+        <img src="./img/cadeira-detalhe.jpg"
+             alt="Detalhe do encosto de uma cadeira de jantar: madeira, linho e hastes de latão"
+             loading="lazy" decoding="async">
+      </div>
+      <div>
+        <h2>Festival de mesas e cadeiras de jantar</h2>
+        <p>Mesas redondas, orgânicas e retangulares em madeira de alto padrão, e as cadeiras a partir de R$ 699. Estoque limitado por modelo.</p>
+        <a class="btn" data-zap data-origem="festival" data-peca="Festival de mesas e cadeiras de jantar" href="#">Ver o que está disponível</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="showroom" id="showroom">
+    <div class="env showroom__grade">
+      <div>
+        <p class="chapeu">Onde estamos</p>
+        <h2>Sente no sofá antes de decidir</h2>
+        <p>Móvel de alto padrão se escolhe com a mão. Nosso showroom no Shopping ID reúne as peças em ambientes montados, do sofá modular às mesas de jantar.</p>
+        <ul class="dados">
+          <li><span>Endereço</span> SCN Quadra 06, Shopping ID — Brasília, DF, 70719-000</li>
+          <li><span>Telefones</span> <a href="tel:+556135223720">(61) 3522-3720</a> · <a href="tel:+556136793005">(61) 3679-3005</a></li>
+          <li><span>Instagram</span> <a href="https://www.instagram.com/lojas_ivi_oficial/" target="_blank" rel="noopener">@lojas_ivi_oficial</a></li>
+          <li><span>Horário</span> Conforme o funcionamento do shopping</li>
+        </ul>
+        <div class="showroom__acoes">
+          <a class="btn btn--zap-oliva" data-zap data-origem="showroom" data-peca="Visita ao showroom" href="#">Combinar uma visita</a>
+          <a class="btn btn--claro" href="https://maps.google.com/?q=Shopping+ID+SCN+Quadra+06+Brasilia" target="_blank" rel="noopener">Abrir no mapa</a>
+        </div>
+      </div>
+
+      <div class="form-bloco" id="contato">
+        <h3>Prefere que a gente chame você?</h3>
+        <p>Deixe seus dados e a nossa equipe retorna no próximo horário comercial.</p>
+        <div class="campo">
+          <label for="f-nome">Nome</label>
+          <input id="f-nome" name="nome" type="text" autocomplete="name" required>
+        </div>
+        <div class="campo">
+          <label for="f-fone">WhatsApp com DDD</label>
+          <input id="f-fone" name="telefone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(61) 90000-0000" required>
+        </div>
+        <div class="campo">
+          <label for="f-ambiente">O que você quer resolver</label>
+          <select id="f-ambiente" name="ambiente">
+            <option value="Sala de estar">Sala de estar</option>
+            <option value="Sala de jantar">Sala de jantar</option>
+            <option value="Quarto">Quarto</option>
+            <option value="Casa inteira">Casa inteira</option>
+            <option value="Ainda estou olhando">Ainda estou olhando</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="f-prazo">Quando pretende comprar</label>
+          <select id="f-prazo" name="prazo">
+            <option value="Este mês">Este mês</option>
+            <option value="Nos próximos 3 meses">Nos próximos 3 meses</option>
+            <option value="Sem data definida">Sem data definida</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="f-msg">Alguma peça em mente? (opcional)</label>
+          <textarea id="f-msg" name="mensagem"></textarea>
+        </div>
+        <button class="btn btn--zap-oliva" type="button" id="enviar">Enviar meus dados</button>
+        <p class="form-aviso" id="form-aviso" role="status"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="rodape">
+    <div class="env rodape__int">
+      <span>Ivi Interiores &amp; Ivi Casas — Brasília, DF</span>
+      <span><a href="https://www.instagram.com/lojas_ivi_oficial/" target="_blank" rel="noopener">@lojas_ivi_oficial</a></span>
+    </div>
+  </footer>
+
+</main>
+
+<a class="flutuante" data-zap data-origem="flutuante" href="#" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-1.7-.9-2.9-1.6-4-3.6-.3-.5.3-.5.8-1.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.5.7.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.2-.3-.3-.5-.5zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3a8.2 8.2 0 1 1 7.2 3.9z"/></svg>
+</a>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada" hidden>
+  <button class="lightbox__btn lightbox__fechar" type="button" id="lb-fechar" aria-label="Fechar">&times;</button>
+  <button class="lightbox__btn lightbox__ant"    type="button" id="lb-ant"    aria-label="Foto anterior">&#8249;</button>
+  <button class="lightbox__btn lightbox__prox"   type="button" id="lb-prox"   aria-label="Próxima foto">&#8250;</button>
+  <div class="lightbox__palco"><img id="lb-img" src="" alt=""></div>
+  <p class="lightbox__legenda" id="lb-legenda"></p>
+</div>
+
+<script src="./js/ivi.js"></script>
+<script>
+/* =========================================================
+   CATÁLOGO E FORMULÁRIO
+   ---------------------------------------------------------
+   Configuração (WhatsApp, Pixel, GA4, planilha) e rastreamento
+   ficam em ./js/ivi.js — um só lugar para as duas páginas.
+   ========================================================= */
+
+/* =========================================================
+   1. PRODUTOS/* =========================================================
+   2. PRODUTOS
+   preco:   número em reais, ou null para "consultar preço"
+   precoDe: preço antigo (riscado), opcional
+   prefixo: texto acima do valor, ex "a partir de"
+   img:     foto principal, ex "./img/cadeira-bella-clara.jpg"
+   galeria: fotos extras da mesma peça (viram miniaturas no card)
+   fit:     "cover" (padrão, corta a foto) ou "contain" (mostra
+            a arte inteira — use nas artes de anúncio com texto)
+   pos:     enquadramento do corte, ex "50% 30%" (só com cover)
+   ========================================================= */
+const PRODUTOS = [
+  {
+    id:"sofa-modular", nome:"Sofá modular", ambiente:"estar",
+    resumo:"Módulos que você reorganiza conforme a sala e a ocasião.",
+    specs:["Composição sob medida","Tecidos e medidas definidos na loja"],
+    preco:null, precoDe:null, cond:"",
+    img:"./img/sofa-modular.jpg", galeria:[], fit:"cover", pos:"50% 55%"
+  },
+  {
+    id:"sofa-bau", nome:"Sofá com baú", ambiente:"estar",
+    resumo:"Baú sob os assentos e abertura completa para deitar.",
+    specs:["Espaço interno para guardar","Assentos com abertura total"],
+    preco:null, precoDe:null, cond:"",
+    img:"./img/sofa-bau.jpg", galeria:[], fit:"cover", pos:"50% 62%"
+  },
+  {
+    id:"poltrona", nome:"Poltrona de leitura", ambiente:"estar",
+    resumo:"Estrutura em madeira e assento estofado, para o canto da sala.",
+    specs:["Madeira maciça","Tecido ou couro a escolher"],
+    preco:null, precoDe:null, cond:"",
+    img:"./img/poltrona-couro.jpg", galeria:["./img/poltrona-design.jpg"], fit:"cover", pos:"50% 45%"
+  },
+  {
+    id:"mesa-centro", nome:"Mesa de centro", ambiente:"estar",
+    resumo:"Peça central em vidro e madeira, para abrir espaço visual na sala.",
+    specs:["Tampo em vidro ou madeira","Modelos redondo e orgânico"],
+    preco:null, precoDe:null, cond:"",
+    img:"./img/showroom-estar.jpg", galeria:[], fit:"cover", pos:"50% 78%"
+  },
+  {
+    id:"mesa-jantar-120", nome:"Mesa de jantar redonda 1,20 m", ambiente:"jantar",
+    resumo:"Base cônica moderna e acabamento laminado.",
+    specs:["1,20 m de diâmetro","Base cônica","Acabamento laminado"],
+    preco:2190, precoDe:null, cond:"à vista, ou 10x de R$ 258",
+    img:"./img/mesa-jantar-120.jpg", galeria:[], fit:"contain"
+  },
+  {
+    id:"cadeira-bella", nome:"Cadeira Bella", ambiente:"jantar",
+    resumo:"Curvas elegantes em madeira de alto padrão, com braços.",
+    specs:["Madeira maciça","Acabamento premium","Vendida por unidade"],
+    preco:1295, precoDe:null, cond:"à vista, por unidade",
+    img:"./img/cadeira-bella-clara.jpg", galeria:["./img/cadeira-bella-verde.jpg"], fit:"cover", pos:"50% 40%"
+  },
+  {
+    id:"cadeiras-jantar", nome:"Festival de cadeiras", ambiente:"jantar",
+    resumo:"Vários modelos em madeira, palhinha e estofado, em promoção.",
+    specs:["Modelos com e sem braço","Palhinha, linho e couro","Vendida por unidade"],
+    preco:699, precoDe:null, prefixo:"a partir de", cond:"à vista, por unidade",
+    img:"./img/cadeiras-festival.jpg", galeria:["./img/cadeira-festival-2.jpg"], fit:"contain"
+  },
+  {
+    id:"aparador-drink", nome:"Aparador Drink", ambiente:"complementos",
+    resumo:"Bandeja embutida para as garrafas e gavetas com abertura suave.",
+    specs:["Madeira de alto padrão","Base metálica dourada","Bandeja embutida"],
+    preco:null, precoDe:null, cond:"",
+    img:"./img/aparador-drink-2.jpg", galeria:["./img/aparador-drink.jpg"], fit:"cover", pos:"50% 52%"
+  },
+  {
+    id:"painel-rack", nome:"Painel para TV 1,80 m e 2,20 m", ambiente:"complementos",
+    resumo:"Design clean que abre espaço visual na sala.",
+    specs:["Tamanhos 1,80 m e 2,20 m","Estoque com preço de fábrica"],
+    preco:799, precoDe:3290, cond:"à vista, enquanto durar o estoque",
+    img:"./img/painel-tv.jpg", galeria:["./img/painel-tv-2.jpg"], fit:"contain"
+  },
+  {
+    id:"decoracao", nome:"Quadros e objetos", ambiente:"decoracao",
+    resumo:"Vasos, bandejas e composições de quadros para fechar o ambiente.",
+    specs:["Peças avulsas","Curadoria da loja","Instalação pela equipe Ivi"],
+    preco:null, precoDe:null, cond:"",
+    img:"./img/entrega-quadros.jpg",
+    galeria:["./img/entrega-quadros-2.jpg","./img/showroom-estar.jpg"],
+    fit:"cover", pos:"50% 42%"
+  }
+];
+
+/* =========================================================
+   2. Mensagem de WhatsApp por peça
+   ========================================================= */
+function mensagemPeca(nome, preco) {
+  let t = "Olá! Vim pelo site e quero saber mais sobre: " + nome + ".";
+  if (preco) t += " Vi o valor de " + formatar(preco) + ".";
+  return t;
+}
+
+/* =========================================================
+   3. Foto ampliada (usada pelos cards do catálogo)
+   ========================================================= */
+const lb = {
+  caixa:   document.getElementById("lightbox"),
+  img:     document.getElementById("lb-img"),
+  legenda: document.getElementById("lb-legenda"),
+  ant:     document.getElementById("lb-ant"),
+  prox:    document.getElementById("lb-prox")
+};
+let lbFotos = [], lbIndice = 0, lbTitulo = "", lbFoco = null;
+
+function lbMostrar() {
+  lb.img.src = lbFotos[lbIndice];
+  lb.img.alt = lbTitulo + " — foto " + (lbIndice + 1) + " de " + lbFotos.length;
+  lb.legenda.textContent = lbFotos.length > 1
+    ? lbTitulo + " · " + (lbIndice + 1) + " de " + lbFotos.length
+    : lbTitulo;
+  lb.ant.hidden = lb.prox.hidden = lbFotos.length < 2;
+}
+function abrirFoto(fotos, indice, titulo, peca) {
+  lbFotos = fotos; lbIndice = indice || 0; lbTitulo = titulo || "";
+  lbFoco = document.activeElement;
+  lbMostrar();
+  lb.caixa.hidden = false;
+  document.body.classList.add("travado");
+  document.getElementById("lb-fechar").focus();
+  rastrear("ampliar_foto", {
+    peca: lbTitulo,
+    id: peca ? peca.id : "",
+    ambiente: peca ? peca.ambiente : "",
+    valor: peca && peca.preco ? peca.preco : 0
+  });
+}
+function fecharFoto() {
+  lb.caixa.hidden = true;
+  document.body.classList.remove("travado");
+  lb.img.src = "";
+  if (lbFoco && lbFoco.focus) lbFoco.focus();
+}
+function passarFoto(passo) {
+  if (!lbFotos.length) return;
+  lbIndice = (lbIndice + passo + lbFotos.length) % lbFotos.length;
+  lbMostrar();
+}
+
+document.getElementById("lb-fechar").addEventListener("click", fecharFoto);
+lb.ant.addEventListener("click", () => passarFoto(-1));
+lb.prox.addEventListener("click", () => passarFoto(1));
+lb.caixa.addEventListener("click", e => { if (e.target === lb.caixa) fecharFoto(); });
+document.addEventListener("keydown", e => {
+  if (lb.caixa.hidden) return;
+  if (e.key === "Escape")     fecharFoto();
+  if (e.key === "ArrowLeft")  passarFoto(-1);
+  if (e.key === "ArrowRight") passarFoto(1);
+});
+
+/* =========================================================
+   4. Catálogo
+   ========================================================= */
+const grade = document.getElementById("grade");
+
+/* escapa aspas e sinais para uso seguro dentro dos atributos HTML */
+function esc(t) {
+  return String(t == null ? "" : t)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function montarCard(p) {
+  const art = document.createElement("article");
+  art.className = "peca";
+  art.dataset.ambiente = p.ambiente;
+  art.dataset.id = p.id;
+
+  /* foto principal + galeria, sem entradas vazias */
+  const fotos = [p.img].concat(p.galeria || []).filter(Boolean);
+  const nome  = esc(p.nome);
+
+  let foto;
+  if (fotos.length) {
+    const classes = "peca__foto peca__foto--zoom" + (p.fit === "contain" ? " peca__foto--contain" : "");
+    const estilo  = p.fit !== "contain" && p.pos ? ' style="--pos:' + esc(p.pos) + '"' : "";
+    foto =
+      '<div class="' + classes + '"' + estilo + '>' +
+        '<img src="' + esc(fotos[0]) + '" alt="' + nome + ' — Ivi Interiores" loading="lazy" decoding="async">' +
+        '<span class="peca__lupa">' + (fotos.length > 1 ? fotos.length + ' fotos' : 'ampliar') + '</span>' +
+      '</div>';
+  } else {
+    foto = '<div class="peca__foto"><div class="peca__vazia"><span>Foto da peça</span><span>./img/' + p.id + '.jpg</span></div></div>';
+  }
+
+  const miniaturas = fotos.length > 1
+    ? '<div class="peca__galeria">' + fotos.map(function (src, i) {
+        return '<button class="peca__thumb" type="button" data-i="' + i + '"' +
+               ' aria-current="' + (i === 0) + '"' +
+               ' aria-label="Ver foto ' + (i + 1) + ' de ' + (i === 0 ? nome : nome) + '">' +
+               '<img src="' + esc(src) + '" alt="" loading="lazy"></button>';
+      }).join("") + '</div>'
+    : '';
+
+  let bloco;
+  if (p.preco) {
+    bloco =
+      (p.precoDe ? '<span class="peca__de">' + formatar(p.precoDe) + '</span>' : '') +
+      (p.prefixo ? '<span class="peca__prefixo">' + esc(p.prefixo) + '</span>' : '') +
+      '<span class="peca__valor">' + formatar(p.preco) + '</span>' +
+      '<span class="peca__cond">' + esc(p.cond || "") + '</span>';
+  } else {
+    bloco = '<span class="peca__consultar">Consultar preço</span>';
+  }
+
+  art.innerHTML =
+    foto + miniaturas +
+    '<div class="peca__corpo">' +
+      '<h3>' + nome + '</h3>' +
+      '<p class="peca__resumo">' + esc(p.resumo) + '</p>' +
+      '<ul class="peca__specs">' + p.specs.map(s => '<li>' + esc(s) + '</li>').join("") + '</ul>' +
+      '<div class="peca__preco">' + bloco +
+        '<a class="btn btn--zap-oliva" href="' + linkZap(mensagemPeca(p.nome, p.preco)) + '" target="_blank" rel="noopener" data-peca="' + nome + '" data-ambiente="' + esc(p.ambiente) + '">Falar sobre esta peça</a>' +
+      '</div>' +
+    '</div>';
+
+  art.querySelector("a.btn").addEventListener("click", function () {
+    rastrear("clique_whatsapp", {
+      peca: p.nome, id: p.id, ambiente: p.ambiente,
+      valor: p.preco || 0, origem: "card"
+    });
+  });
+
+  /* troca a foto grande ao clicar na miniatura */
+  if (fotos.length > 1) {
+    const grande = art.querySelector(".peca__foto img");
+    art.querySelectorAll(".peca__thumb").forEach(function (b) {
+      b.addEventListener("click", function () {
+        const i = Number(b.dataset.i);
+        grande.src = fotos[i];
+        art.querySelectorAll(".peca__thumb").forEach(function (o) {
+          o.setAttribute("aria-current", String(o === b));
+        });
+      });
+    });
+  }
+
+  /* clique na foto grande abre ampliada, já na imagem que está à mostra */
+  if (fotos.length) {
+    const moldura = art.querySelector(".peca__foto");
+    moldura.addEventListener("click", function () {
+      const atual = art.querySelector(".peca__foto img").getAttribute("src");
+      abrirFoto(fotos, Math.max(0, fotos.indexOf(atual)), p.nome, p);
+    });
+  }
+
+  return art;
+}
+
+/* ViewContent: dispara quando a peça aparece de fato na tela,
+   uma vez por peça por visita. Sem isso a Meta não tem sinal
+   nenhum de interesse por peça para montar públicos. */
+const jaVistas = new Set();
+
+const observador = ("IntersectionObserver" in window)
+  ? new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        const card = e.target;
+        const id = card.dataset.id;
+        observador.unobserve(card);
+        if (jaVistas.has(id)) return;
+        jaVistas.add(id);
+        const p = PRODUTOS.find(x => x.id === id);
+        if (!p) return;
+        rastrear("ver_peca", {
+          peca: p.nome, id: p.id, ambiente: p.ambiente, valor: p.preco || 0
+        });
+      });
+    }, { threshold: 0.5 })
+  : null;
+
+function renderizar(filtro) {
+  grade.innerHTML = "";
+  PRODUTOS
+    .filter(p => filtro === "todos" || p.ambiente === filtro)
+    .forEach(p => {
+      const card = montarCard(p);
+      grade.appendChild(card);
+      if (observador && !jaVistas.has(p.id)) observador.observe(card);
+    });
+}
+
+renderizar("todos");
+
+document.querySelectorAll(".filtro").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filtro").forEach(b => b.setAttribute("aria-pressed", "false"));
+    btn.setAttribute("aria-pressed", "true");
+    renderizar(btn.dataset.filtro);
+    rastrear("filtrar_catalogo", {
+      filtro: btn.dataset.filtro,
+      ambiente: btn.dataset.filtro   // vira content_category na Meta
+    });
+  });
+});
+
+/* Links de WhatsApp fora do catálogo */
+document.querySelectorAll("[data-zap]").forEach(el => {
+  const peca = el.dataset.peca || "";
+  const texto = peca
+    ? "Olá! Vim pelo site e quero falar sobre: " + peca + "."
+    : "Olá! Vim pelo site da Ivi e quero atendimento.";
+  el.href = linkZap(texto);
+  el.target = "_blank";
+  el.rel = "noopener";
+  el.addEventListener("click", () => {
+    rastrear("clique_whatsapp", { peca: peca || "geral", origem: el.dataset.origem || "site" });
+  });
+});
+
+/* =========================================================
+   5. Formulário
+   ========================================================= */
+const aviso = document.getElementById("form-aviso");
+
+function mostrarAviso(texto) {
+  aviso.textContent = texto;
+  aviso.setAttribute("data-visivel", "true");
+}
+
+document.getElementById("enviar").addEventListener("click", async () => {
+  const dados = {
+    nome: document.getElementById("f-nome").value.trim(),
+    telefone: document.getElementById("f-fone").value.trim(),
+    ambiente: document.getElementById("f-ambiente").value,
+    prazo: document.getElementById("f-prazo").value,
+    mensagem: document.getElementById("f-msg").value.trim(),
+    origem: "site-ivi"
+  };
+
+  if (!dados.nome || !dados.telefone) {
+    mostrarAviso("Preencha nome e WhatsApp para a gente conseguir retornar.");
+    return;
+  }
+
+  rastrear("envio_formulario", {
+    ambiente: dados.ambiente,
+    prazo: dados.prazo,
+    origem: "formulario_showroom"
+  });
+
+  function textoZap(d) {
+    return "Olá! Vim pelo site.\n" +
+      "Nome: " + d.nome + "\n" +
+      "WhatsApp: " + d.telefone + "\n" +
+      "Ambiente: " + d.ambiente + "\n" +
+      "Prazo: " + d.prazo +
+      (d.mensagem ? "\nObservação: " + d.mensagem : "");
+  }
+
+  /* Guarda para a página de obrigado montar a mensagem já preenchida. */
+  try { sessionStorage.setItem("ivi_lead", JSON.stringify(dados)); } catch (e) {}
+
+  /* Dá um respiro para o Pixel despachar o Lead antes de trocar de página. */
+  function irParaObrigado() {
+    setTimeout(function () { window.location.href = "./obrigado.html"; }, 350);
+  }
+
+  if (CONFIG.formEndpoint) {
+    const botao = document.getElementById("enviar");
+    botao.disabled = true;
+    const rotulo = botao.textContent;
+    botao.textContent = "Enviando...";
+    try {
+      /* Sem header Content-Type de propósito: qualquer cabeçalho customizado
+         dispara um preflight OPTIONS, que o Apps Script não responde e a
+         requisição morre no CORS. Sem ele o fetch manda text/plain, que é
+         "simple request" e passa direto. O Apps Script lê e.postData.contents. */
+      const r = await fetch(CONFIG.formEndpoint, {
+        method: "POST",
+        body: JSON.stringify(dados)
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      mostrarAviso("Recebemos seus dados. Levando você para a próxima etapa...");
+      irParaObrigado();
+    } catch (e) {
+      /* A planilha falhou. Em vez de perder o lead, cai no WhatsApp
+         e ainda assim leva para a página de obrigado. */
+      mostrarAviso("Abrimos o WhatsApp com seus dados. É só tocar em enviar.");
+      window.open(linkZap(textoZap(dados)), "_blank", "noopener");
+      irParaObrigado();
+    } finally {
+      botao.disabled = false;
+      botao.textContent = rotulo;
+    }
+  } else {
+    /* Sem planilha configurada: WhatsApp em aba nova, obrigado nesta. */
+    window.open(linkZap(textoZap(dados)), "_blank", "noopener");
+    irParaObrigado();
+  }
+});
+</script>
+</body>
+</html>

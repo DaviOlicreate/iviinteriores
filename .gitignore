@@ -1,0 +1,9 @@
+# Fotos originais, não usadas pelo site (13 MB).
+# Ficam no seu disco, mas não vão para o repositório nem para o ar.
+# As versões otimizadas que o site usa estão em img/.
+/Captura de Tela*.png
+/*_n.jpg
+/*_n.jpeg
+
+# Lixo do macOS
+.DS_Store
